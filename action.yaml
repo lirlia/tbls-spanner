@@ -1,0 +1,68 @@
+name: "Generate TBLs Documentation from Spanner DDL"
+description: "Use Spanner DDL to start a Spanner emulator and run tbls to generate documentation."
+author: "lirlia"
+inputs:
+  tbls_args:
+    description: "Arguments to pass to tbls command"
+    required: false
+    default: "doc --rm-dist"
+  tbls_output_path:
+    description: "Output Path"
+    required: false
+    default: "docs/tbls"
+  ddl_path:
+    description: "Path to the Spanner DDL file"
+    required: true
+  google_project:
+    description: "Google Project Name"
+    required: false
+    default: "project"
+  spanner_instance:
+    description: "Spanner Instance Name"
+    required: false
+    default: "instance"
+  spanner_database:
+    description: "Spanner Database Name"
+    required: false
+    default: "database"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1.1.1
+
+    - name: Set up tbls
+      uses: k1low/setup-tbls@v1.2.0
+
+    - uses: awalsh128/cache-apt-pkgs-action@v1.3.1
+      with:
+        packages: netcat
+        version: 1.0
+
+    - name: Generate tbls documentation
+      run: |
+
+        gcloud config set auth/disable_credentials true
+        gcloud config set project $p
+        gcloud config set api_endpoint_overrides/spanner http://localhost:9020/
+        gcloud emulators spanner start --quiet &
+
+        timeout 30 bash -c 'until echo | nc -z localhost 9020; do sleep 0.5; done'
+        [[ $? -eq 0 ]] || exit 1
+
+        gcloud spanner instances create $i --config=emulator-config --description "for tbls" --nodes=1
+        gcloud spanner databases create $d --instance=$i --ddl-file "$ddl_path"
+
+        SPANNER_EMULATOR_HOST=localhost:9010 tbls $tbls_args spanner://$p/$i/$d "$tbls_output_path"
+      shell: bash
+      env:
+        tbls_args: ${{ inputs.tbls_args }}
+        tbls_output_path: ${{ inputs. tbls_output_path }}
+        ddl_path: ${{ inputs.ddl_path }}
+        p: ${{ inputs.google_project }}
+        i: ${{ inputs.spanner_instance }}
+        d: ${{ inputs.spanner_database }}

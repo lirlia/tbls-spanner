@@ -1,0 +1,117 @@
+name: Test
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+    paths-ignore:
+      - '*.md'
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'
+
+env:
+  DEBUG: true
+
+jobs:
+  test-ddl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          ddl_path: spanner.sql
+
+      - name: file exists
+        run: |
+          set -x
+          set -o errexit
+
+          stat docs/tbls/schema.svg > /dev/null 2>&1
+          stat docs/tbls/Singers.svg > /dev/null 2>&1
+          stat docs/tbls/Albums.svg > /dev/null 2>&1
+          stat docs/tbls/README.md > /dev/null 2>&1
+          stat docs/tbls/Singers.md > /dev/null 2>&1
+          stat docs/tbls/Albums.md > /dev/null 2>&1
+          stat docs/tbls/schema.json > /dev/null 2>&1
+
+  test-custom-output-path:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          ddl_path: spanner.sql
+          tbls_output_path: docs/custom
+
+      - name: file exists
+        run: |
+          set -x
+          set -o errexit
+
+          stat docs/custom/schema.svg > /dev/null 2>&1
+          stat docs/custom/Singers.svg > /dev/null 2>&1
+          stat docs/custom/Albums.svg > /dev/null 2>&1
+          stat docs/custom/README.md > /dev/null 2>&1
+          stat docs/custom/Singers.md > /dev/null 2>&1
+          stat docs/custom/Albums.md > /dev/null 2>&1
+          stat docs/custom/schema.json > /dev/null 2>&1
+
+  test-custom-project-instance-db-name:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          ddl_path: spanner.sql
+          google_project: testproject
+          spanner_instance: testinstance
+          spanner_database: testdatabase
+
+      - name: file exists
+        run: |
+          set -x
+          set -o errexit
+
+          stat docs/tbls/schema.svg > /dev/null 2>&1
+          stat docs/tbls/Singers.svg > /dev/null 2>&1
+          stat docs/tbls/Albums.svg > /dev/null 2>&1
+          stat docs/tbls/README.md > /dev/null 2>&1
+          stat docs/tbls/Singers.md > /dev/null 2>&1
+          stat docs/tbls/Albums.md > /dev/null 2>&1
+          stat docs/tbls/schema.json > /dev/null 2>&1
+
+      - name: specific project, instance, database
+        run: |
+          set -x
+          set -o errexit
+
+          head -1 docs/tbls/README.md
+          grep -q 'projects/testproject/instances/testinstance/databases/testdatabase' docs/tbls/README.md
+
+  test-custom-tbls-args:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          ddl_path: spanner.sql
+          tbls_args: doc --without-er
+
+      - name: file exists
+        run: |
+          set -x
+          set -o errexit
+
+          stat docs/tbls/README.md > /dev/null 2>&1
+          stat docs/tbls/Singers.md > /dev/null 2>&1
+          stat docs/tbls/Albums.md > /dev/null 2>&1
+          stat docs/tbls/schema.json > /dev/null 2>&1
+
+          [[ ! -e docs/tbls/schema.svg ]]
+          [[ ! -e docs/tbls/Singers.svg ]]
+          [[ ! -e docs/tbls/Albums.svg ]]
