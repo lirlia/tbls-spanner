@@ -12,6 +12,7 @@ This GitHub Action is designed to automatically generate documentation for datab
 | `google_project`    | Google Cloud project name                 | No       | `project`         |
 | `spanner_instance`  | Spanner instance name                     | No       | `instance`        |
 | `spanner_database`  | Spanner database name                     | No       | `database`        |
+| `timeout`           | Timeout                                   | No       | `60`(sec)         |
 
 ## Usage
 
