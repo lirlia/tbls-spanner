@@ -1,0 +1,58 @@
+name: "Generate TBLs Documentation from Spanner DDL"
+description: "Use Spanner DDL to start a Spanner emulator and run tbls to generate documentation."
+author: "lirlia"
+inputs:
+  tbls_args:
+    description: "Arguments to pass to tbls command"
+    required: false
+    default: "doc --rm-dist -o docs/tbls"
+  ddl_path:
+    description: "Path to the Spanner DDL file"
+    required: true
+  google_project:
+    description: "Google Project Name"
+    required: false
+    default: "project"
+  spanner_instance:
+    description: "Spanner Instance Name"
+    required: false
+    default: "instance"
+  spanner_database:
+    description: "Spanner Database Name"
+    required: false
+    default: "database"
+
+runs:
+  env:
+    tbls_args: ${{ github.event.inputs.tbls_args }}
+    ddl_path: ${{ github.event.inputs.ddl_path }}
+    p: ${{ github.event.inputs.google_project }}
+    i: ${{ github.event.inputs.spanner_instance }}
+    d: ${{ github.event.inputs.spanner_database }}
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        project_id: $p
+        export_default_credentials: true
+
+    - name: Start Spanner Emulator
+      run: |
+        gcloud config set auth/disable_credentials true
+        gcloud config set project $p
+        gcloud config set api_endpoint_overrides/spanner http://localhost:9010/
+        gcloud spanner instances create $i --config=emulator-config --nodes=1
+        gcloud spanner databases create $d --instance=$i --ddl-file "$ddl_path"
+      shell: bash
+
+    - name: Set up tbls
+      uses: k1low/setup-tbls@v1.2.0
+
+    - name: Generate tbls documentation
+      run: |
+        SPANNER_EMULATOR_HOST=localhost:9010 tbls $tbls_args spanner://$p/$i/$d
+      shell: bash

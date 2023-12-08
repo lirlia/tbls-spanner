@@ -1,0 +1,18 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DEBUG: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          ddl_path: spanner.sql
