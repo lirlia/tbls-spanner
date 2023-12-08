@@ -30,6 +30,21 @@ jobs:
           # Specify other inputs as needed
 ```
 
+### use own .tbls.yml
+
+```yaml
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: lirlia/tbls-spanner@latest
+        with:
+          ddl_path: 'path/to/your/ddl.sql'
+          tbls_args: 'doc --config path/to/your/.tbls.yml'
+          tbls_output_path: ''
+```
+
 ## Conclusion
 
 This GitHub Action simplifies the process of generating documentation from Spanner DDL files, making it easier for teams to maintain up-to-date documentation of their database schemas.
