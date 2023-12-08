@@ -54,6 +54,8 @@ runs:
         timeout 30 bash -c 'until echo | nc -z localhost 9020; do sleep 0.5; done'
         [[ $? -eq 0 ]] || exit 1
 
+        echo test
+
         gcloud spanner instances create $i --config=emulator-config --description "for tbls" --nodes=1
         gcloud spanner databases create $d --instance=$i --ddl-file "$ddl_path"
 
