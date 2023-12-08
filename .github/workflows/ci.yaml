@@ -8,6 +8,7 @@ on:
       - synchronize
     paths-ignore:
       - '*.md'
+      - '*.json'
   push:
     branches:
       - main
