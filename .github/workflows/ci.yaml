@@ -111,3 +111,42 @@ jobs:
           [[ ! -e docs/tbls/schema.svg ]]
           [[ ! -e docs/tbls/Singers.svg ]]
           [[ ! -e docs/tbls/Albums.svg ]]
+
+  test-custom-tbls-yml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          cat <<TBLS > /tmp/.tbls.yml
+          comments:
+            - table: Singers
+              tableComment: this is singers table
+              columnComments:
+                FirstName: this is first name
+          TBLS
+
+      - uses: ./
+        with:
+          ddl_path: spanner.sql
+          tbls_args: doc --config /tmp/.tbls.yml
+
+      - name: file exists
+        run: |
+          set -x
+          set -o errexit
+
+          stat docs/tbls/schema.svg > /dev/null 2>&1
+          stat docs/tbls/Singers.svg > /dev/null 2>&1
+          stat docs/tbls/Albums.svg > /dev/null 2>&1
+          stat docs/tbls/README.md > /dev/null 2>&1
+          stat docs/tbls/Singers.md > /dev/null 2>&1
+          stat docs/tbls/Albums.md > /dev/null 2>&1
+          stat docs/tbls/schema.json > /dev/null 2>&1
+
+      - name: has comment
+        run: |
+          set -x
+          set -o errexit
+
+          grep -q 'this is singers table' docs/tbls/Singers.md
+          grep -q 'this is first name' docs/tbls/Singers.md
