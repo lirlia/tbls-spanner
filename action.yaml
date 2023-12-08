@@ -51,7 +51,7 @@ runs:
         gcloud config set api_endpoint_overrides/spanner http://localhost:9020/
         gcloud emulators spanner start --quiet &
 
-        timeout 30 bash -c 'until echo | nc -z localhost 9020; do sleep 0.5; done'
+        timeout 60 bash -c 'until echo | nc -z localhost 9020; do sleep 0.5; done'
         [[ $? -eq 0 ]] || exit 1
 
         gcloud spanner instances create $i --config=emulator-config --description "for tbls" --nodes=1
