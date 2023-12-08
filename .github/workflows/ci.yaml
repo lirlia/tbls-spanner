@@ -9,11 +9,6 @@ on:
     paths-ignore:
       - '*.md'
       - '*.json'
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '*.md'
 
 env:
   DEBUG: true
