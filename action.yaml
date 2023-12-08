@@ -25,6 +25,10 @@ inputs:
     description: "Spanner Database Name"
     required: false
     default: "database"
+  timeout:
+    description: "Timeout"
+    required: false
+    default: "60"
 
 runs:
   using: "composite"
@@ -51,7 +55,7 @@ runs:
         gcloud config set api_endpoint_overrides/spanner http://localhost:9020/
         gcloud emulators spanner start --quiet &
 
-        timeout 60 bash -c 'until echo | nc -z localhost 9020; do sleep 0.5; done'
+        timeout $timeout bash -c 'until echo | nc -z localhost 9020; do sleep 0.5; done'
         [[ $? -eq 0 ]] || exit 1
 
         gcloud spanner instances create $i --config=emulator-config --description "for tbls" --nodes=1
@@ -66,3 +70,4 @@ runs:
         p: ${{ inputs.google_project }}
         i: ${{ inputs.spanner_instance }}
         d: ${{ inputs.spanner_database }}
+        timeout: ${{ inputs.timeout }}
