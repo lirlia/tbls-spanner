@@ -6,10 +6,5 @@
   ],
   "timezone": "Asia/Tokyo",
   "separateMultipleMajor": true,
-  "packageRules": [
-    {
-      "description": "Automerge updates",
-      "automerge": true
-    }
-  ]
+  "automerge": true
 }
