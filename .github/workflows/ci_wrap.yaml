@@ -1,0 +1,19 @@
+name: test
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  call-test:
+    uses: ./.github/workflows/unit_test.yaml
+  status-check:
+    runs-on: ubuntu-latest
+    needs: [call-test]
+    if: always()
+    steps:
+      - run: |
+          [[ ${{ needs.call-test.result }} == 'success' ]] && exit 0
+          exit 1
