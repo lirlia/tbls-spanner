@@ -5,5 +5,11 @@
     ":combinePatchMinorReleases"
   ],
   "timezone": "Asia/Tokyo",
-  "separateMultipleMajor": true
+  "separateMultipleMajor": true,
+  "packageRules": [
+    {
+      "description": "Automerge updates",
+      "automerge": true
+    }
+  ]
 }
