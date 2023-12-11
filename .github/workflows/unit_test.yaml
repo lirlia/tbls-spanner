@@ -1,14 +1,8 @@
-name: Test
+name: unit test
 
 on:
-  pull_request:
-    types:
-      - opened
-      - edited
-      - synchronize
-    paths-ignore:
-      - '*.md'
-      - '*.json'
+  workflow_call: {}
+  workflow_dispatch: {}
 
 env:
   DEBUG: true
