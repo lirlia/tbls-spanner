@@ -34,7 +34,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2.2.0

@@ -11,7 +11,7 @@ jobs:
   test-ddl:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         with:
           ddl_path: spanner.sql
@@ -32,7 +32,7 @@ jobs:
   test-custom-output-path:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         with:
           ddl_path: spanner.sql
@@ -54,7 +54,7 @@ jobs:
   test-custom-project-instance-db-name:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         with:
           ddl_path: spanner.sql
@@ -86,7 +86,7 @@ jobs:
   test-custom-tbls-args:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./
         with:
           ddl_path: spanner.sql
@@ -109,7 +109,7 @@ jobs:
   test-custom-tbls-yml:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: |
           cat <<TBLS > /tmp/.tbls.yml
           comments:
