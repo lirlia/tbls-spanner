@@ -42,7 +42,7 @@ runs:
     - name: Set up tbls
       uses: k1low/setup-tbls@v1.3.0
 
-    - uses: awalsh128/cache-apt-pkgs-action@v1.5.1
+    - uses: awalsh128/cache-apt-pkgs-action@v1.5.3
       with:
         packages: netcat
         version: 1.0
