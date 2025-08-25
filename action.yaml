@@ -37,7 +37,7 @@ runs:
       uses: actions/checkout@v5
 
     - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v2.2.0
+      uses: google-github-actions/setup-gcloud@v2.2.1
 
     - name: Set up tbls
       uses: k1low/setup-tbls@v1.3.0
